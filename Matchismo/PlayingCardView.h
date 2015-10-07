@@ -9,12 +9,22 @@
 
 #import <UIKit/UIKit.h>
 
+@class PlayingCardView; //defining PlayingCardView (Forward Declaration)
+
+@protocol PlayingCardViewDelegate <NSObject>
+
+- (void)playingCardViewWasTapped:(PlayingCardView *)playingCardView;
+
+@end
+
 @interface PlayingCardView : UIView
 
 @property (nonatomic) NSUInteger rank;
 @property (nonatomic, strong) NSString *suit;
 @property (nonatomic) BOOL faceUp;
+@property (weak, nonatomic) id<PlayingCardViewDelegate> delegate;
 
 - (void)pinch:(UIPinchGestureRecognizer *)gesture;
+
 
 @end

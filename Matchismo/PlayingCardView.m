@@ -72,9 +72,14 @@
     }
 }
 
-- (void)swipe:(UISwipeGestureRecognizer *)sender
+- (void)tap:(UISwipeGestureRecognizer *)sender
 {
     self.faceUp = !self.faceUp;
+    
+    if (self.delegate)
+    {
+        [self.delegate playingCardViewWasTapped:self];
+    }
 }
 
 #pragma mark - Drawing
@@ -123,7 +128,7 @@
     }
     else
     {
-        [[UIImage imageNamed:@"cardback"] drawInRect:self.bounds];
+        [[UIImage imageNamed:@"appleCard"] drawInRect:self.bounds];
     }
 }
 
@@ -247,7 +252,7 @@
     
     [self addGestureRecognizer:[[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinch:)]];
     
-    [self addGestureRecognizer:[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipe:)]];
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)]];
 }
 
 - (void)awakeFromNib

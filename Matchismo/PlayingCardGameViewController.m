@@ -12,7 +12,7 @@
 #import "PlayingCardGame.h"
 #import "PlayingCardView.h"
 
-@interface PlayingCardGameViewController ()
+@interface PlayingCardGameViewController () <PlayingCardViewDelegate>
 
 @property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
 @property (strong, nonatomic) IBOutletCollection(PlayingCardView) NSArray *playingCardViews;
@@ -24,18 +24,48 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //test
+    [self startNewGame];
+    [self setUpDeck];
+}
+
+- (void)setUpDeck
+{
+    int i =0;
+    for (PlayingCardView *playingCardView in self.playingCardViews)
+    {
+        playingCardView.delegate = self;
+        
+        Card *card = [self.game cardAtIndex:i]; //[self.deck drawRandomCard];
+        if ([card isKindOfClass:[PlayingCard class]])
+        {
+            PlayingCard *playingCard = (PlayingCard *)card;
+            playingCardView.rank = playingCard.rank;
+            playingCardView.suit = playingCard.suit;
+        }
+        i++;
+        
+    }
+}
+
+- (void)playingCardViewWasTapped:(PlayingCardView *)playingCardView
+{
+    NSLog(@"%lu", (unsigned long)playingCardView.rank);
+    NSLog(@"%@", playingCardView.suit);
 }
 
 - (void)startNewGame
 {
+    
+//    if (self.threeCardGame.on)
+//    {
+//        self.game = [[CardMatchingGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:3];
+//    }
+//    else
+//        self.game = [[CardMatchingGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:2];
+    
     self.messages = [NSMutableArray new];
-    if (self.threeCardGame.on)
-    {
-        self.game = [[CardMatchingGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:3];
-    }
-    else
-        self.game = [[CardMatchingGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:2];
+    
+    self.game = [self createGame];
     
     self.matchResults.text = @"Good Luck!";
     self.threeCardGame.enabled = YES;
@@ -55,7 +85,7 @@
 
 - (CardMatchingGame *)createGame
 {
-    return [[PlayingCardGame alloc] initWithCardCount:[self.cardButtons count] usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
+    return [[PlayingCardGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender
