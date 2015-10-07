@@ -41,17 +41,13 @@
             PlayingCard *playingCard = (PlayingCard *)card;
             playingCardView.rank = playingCard.rank;
             playingCardView.suit = playingCard.suit;
+            playingCardView.screenLocationIndex = i;
         }
         i++;
         
     }
 }
 
-- (void)playingCardViewWasTapped:(PlayingCardView *)playingCardView
-{
-    NSLog(@"%lu", (unsigned long)playingCardView.rank);
-    NSLog(@"%@", playingCardView.suit);
-}
 
 - (void)startNewGame
 {
@@ -88,10 +84,10 @@
     return [[PlayingCardGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
 }
 
-- (IBAction)touchCardButton:(UIButton *)sender
+- (void)playingCardViewWasTapped:(PlayingCardView *)playingCardView
 {
     self.threeCardGame.enabled = NO;
-    NSUInteger cardIndex = [self.cardButtons indexOfObject:sender];
+    NSUInteger cardIndex = playingCardView.screenLocationIndex;
     
     if (! self.messages)
     {
@@ -114,7 +110,40 @@
     }
     [self updateUI];
     
+    //[playingCardView setBackgroundColor:[UIColor greenColor]];
+    
+    NSLog(@"%lu", (unsigned long)playingCardView.rank);
+    NSLog(@"%@", playingCardView.suit);
 }
+
+
+//- (IBAction)touchCardButton:(UIButton *)sender
+//{
+//    self.threeCardGame.enabled = NO;
+//    NSUInteger cardIndex = [self.cardButtons indexOfObject:sender];
+//    
+//    if (! self.messages)
+//    {
+//        self.messages = [NSMutableArray new];
+//    }
+//    
+//    NSString *returnedMessage = [self.game chooseCardAtIndex:cardIndex];
+//    
+//    if (returnedMessage)
+//    {
+//        [self.messages addObject:returnedMessage];
+//    }
+//    if ([self.messages count] > 0)
+//    {
+//        self.matchResults.text = [self.messages lastObject];
+//    }
+//    else
+//    {
+//        self.matchResults.text = returnedMessage;
+//    }
+//    [self updateUI];
+//    
+//}
 
 - (void)updateUI
 {

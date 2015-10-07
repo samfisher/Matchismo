@@ -22,6 +22,7 @@
 @property (nonatomic) NSUInteger rank;
 @property (nonatomic, strong) NSString *suit;
 @property (nonatomic) BOOL faceUp;
+@property (nonatomic) int screenLocationIndex;
 @property (weak, nonatomic) id<PlayingCardViewDelegate> delegate;
 
 - (void)pinch:(UIPinchGestureRecognizer *)gesture;
