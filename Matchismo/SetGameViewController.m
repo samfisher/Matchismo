@@ -26,7 +26,7 @@
 {
     [super viewDidLoad];
     
-    self.numberOfStartingCards = 16;
+    self.numberOfStartingCards = 20;
     self.maxCardSize = CGSizeMake(120.0, 120.0);
     
     self.deck = [self createDeck];
