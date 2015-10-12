@@ -18,9 +18,9 @@
     [self setNeedsDisplay];
 }
 
-- (void)setSymbol:(NSString *)symbol
+- (void)setShape:(NSString *)shape
 {
-    _symbol = symbol;
+    _shape = shape;
     [self setNeedsDisplay];
 }
 
@@ -66,33 +66,33 @@
     }
     [roundedRect stroke];
     
-    [self drawSymbols];
+    [self drawShapes];
 }
 
-#define SYMBOL_OFFSET 0.2;
-#define SYMBOL_LINE_WIDTH 0.02;
+#define SHAPE_OFFSET 0.2;
+#define SHAPE_LINE_WIDTH 0.02;
 
-- (void)drawSymbols
+- (void)drawShapes
 {
     [[self uiColor] setStroke];
     CGPoint point = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
     if (self.number == 1)
     {
-        [self drawSymbolAtPoint:point];
+        [self drawShapeAtPoint:point];
         return;
     }
-    CGFloat dx = self.bounds.size.width * SYMBOL_OFFSET;
+    CGFloat dx = self.bounds.size.width * SHAPE_OFFSET;
     if (self.number == 2)
     {
-        [self drawSymbolAtPoint:CGPointMake(point.x - dx / 2.0, point.y)];
-        [self drawSymbolAtPoint:CGPointMake(point.x + dx / 2.0, point.y)];
+        [self drawShapeAtPoint:CGPointMake(point.x - dx / 2.0, point.y)];
+        [self drawShapeAtPoint:CGPointMake(point.x + dx / 2.0, point.y)];
         return;
     }
     if (self.number == 3)
     {
-        [self drawSymbolAtPoint:point];
-        [self drawSymbolAtPoint:CGPointMake(point.x - dx, point.y)];
-        [self drawSymbolAtPoint:CGPointMake(point.x + dx, point.y)];
+        [self drawShapeAtPoint:point];
+        [self drawShapeAtPoint:CGPointMake(point.x - dx, point.y)];
+        [self drawShapeAtPoint:CGPointMake(point.x + dx, point.y)];
         return;
     }
 }
@@ -114,17 +114,17 @@
     return nil;
 }
 
-- (void)drawSymbolAtPoint:(CGPoint)point
+- (void)drawShapeAtPoint:(CGPoint)point
 {
-    if ([self.symbol isEqualToString:@"oval"])
+    if ([self.shape isEqualToString:@"oval"])
     {
         [self drawOvalAtPoint:point];
     }
-    else if ([self.symbol isEqualToString:@"squiggle"])
+    else if ([self.shape isEqualToString:@"squiggle"])
     {
         [self drawSquiggleAtPoint:point];
     }
-    else if ([self.symbol isEqualToString:@"diamond"])
+    else if ([self.shape isEqualToString:@"diamond"])
     {
         [self drawDiamondAtPoint:point];
     }
@@ -139,7 +139,7 @@
     CGFloat dy = self.bounds.size.height * OVAL_HEIGHT / 2.0;
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(point.x - dx, point.y - dy, 2.0 * dx, 2.0 * dy)
                                                     cornerRadius:dx];
-    path.lineWidth = self.bounds.size.width * SYMBOL_LINE_WIDTH;
+    path.lineWidth = self.bounds.size.width * SHAPE_LINE_WIDTH;
     [self shadePath:path];
     [path stroke];
 }
@@ -166,7 +166,7 @@
     [path addCurveToPoint:CGPointMake(point.x - dx, point.y - dy)
             controlPoint1:CGPointMake(point.x - dx - dsqx, point.y + dy - dsqy)
             controlPoint2:CGPointMake(point.x - dx + dsqx, point.y - dy + dsqy)];
-    path.lineWidth = self.bounds.size.width * SYMBOL_LINE_WIDTH;
+    path.lineWidth = self.bounds.size.width * SHAPE_LINE_WIDTH;
     [self shadePath:path];
     [path stroke];
 }
@@ -184,7 +184,7 @@
     [path addLineToPoint:CGPointMake(point.x, point.y + dy)];
     [path addLineToPoint:CGPointMake(point.x - dx, point.y)];
     [path closePath];
-    path.lineWidth = self.bounds.size.width * SYMBOL_LINE_WIDTH;
+    path.lineWidth = self.bounds.size.width * SHAPE_LINE_WIDTH;
     [self shadePath:path];
     [path stroke];
 }
@@ -217,7 +217,7 @@
             start.y += dy;
             end.y += dy;
         }
-        stripes.lineWidth = self.bounds.size.width / 2 * SYMBOL_LINE_WIDTH;
+        stripes.lineWidth = self.bounds.size.width / 2 * SHAPE_LINE_WIDTH;
         [stripes stroke];
         CGContextRestoreGState(UIGraphicsGetCurrentContext());
     }

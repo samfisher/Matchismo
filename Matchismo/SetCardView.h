@@ -12,7 +12,7 @@
 
 
 @property (strong, nonatomic) NSString *color;
-@property (strong, nonatomic) NSString *symbol;
+@property (strong, nonatomic) NSString *shape;
 @property (strong, nonatomic) NSString *shading;
 @property (nonatomic) NSUInteger number;
 

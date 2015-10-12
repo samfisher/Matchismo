@@ -26,6 +26,9 @@
 
 - (UIView *)createViewForCard:(Card *)card;
 - (void)updateView:(UIView *)view forCard:(Card *)card;
+- (void)touchCard:(UITapGestureRecognizer *)gesture;
+- (void)startNewGame;
+- (void)updateUI;
 
 @end
 
