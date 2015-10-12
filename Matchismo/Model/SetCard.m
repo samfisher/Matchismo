@@ -132,7 +132,7 @@
 
 + (NSArray *)validShapes
 {
-    return @[@"▲",@"●",@"■"];
+    return @[@"oval",@"squiggle",@"diamond"];
 }
 
 @synthesize shape = _shape;

@@ -30,5 +30,7 @@
 - (void)startNewGame;
 - (void)updateUI;
 
+//TODO add arraw of views
+
 @end
 

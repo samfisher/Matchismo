@@ -203,7 +203,7 @@
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Playing Card" id="SmE-5j-57x"/>
+                    <tabBarItem key="tabBarItem" title="Playing Card" image="cards-32" id="SmE-5j-57x"/>
                     <navigationItem key="navigationItem" title="Playing Card Game" id="eBH-go-w17">
                         <barButtonItem key="rightBarButtonItem" title="History" id="Mth-ei-cEo"/>
                     </navigationItem>
@@ -258,7 +258,7 @@
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Set" id="axg-1n-zeX"/>
+                    <tabBarItem key="tabBarItem" title="Set" image="workflow-32" id="axg-1n-zeX"/>
                     <navigationItem key="navigationItem" title="Set Game" id="BhZ-tF-gZk">
                         <barButtonItem key="rightBarButtonItem" title="History" id="dGL-6M-mb8"/>
                     </navigationItem>
@@ -275,6 +275,8 @@
     </scenes>
     <resources>
         <image name="cardfront" width="64" height="96"/>
+        <image name="cards-32" width="32" height="32"/>
         <image name="settings_3-32" width="32" height="32"/>
+        <image name="workflow-32" width="25" height="25"/>
     </resources>
 </document>
