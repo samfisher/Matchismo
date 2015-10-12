@@ -14,8 +14,8 @@
 
 @interface PlayingCardGameViewController () <PlayingCardViewDelegate>
 
-@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
 @property (strong, nonatomic) IBOutletCollection(PlayingCardView) NSArray *playingCardViews;
+
 
 @end
 
@@ -24,11 +24,34 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.numberOfStartingCards = 35;
+    self.maxCardSize = CGSizeMake(80.0, 120.0);
+    
     [self startNewGame];
     [self setUpDeck];
 }
 
-- (void)setUpDeck
+- (UIView *)createViewForCard:(Card *)card
+{
+    PlayingCardView *view = [[PlayingCardView alloc] init];
+    [self updateView:view forCard:card];
+    return view;
+}
+
+- (void)updateView:(UIView *)view forCard:(Card *)card
+{
+    if (![card isKindOfClass:[PlayingCard class]]) return;
+    if (![view isKindOfClass:[PlayingCardView class]]) return;
+    PlayingCard *playingCard = (PlayingCard *)card;
+    PlayingCardView *playingCardView = (PlayingCardView *)view;
+    playingCardView.rank = playingCard.rank;
+    playingCardView.suit = playingCard.suit;
+    playingCardView.faceUp = playingCard.chosen;
+    
+}
+
+- (void)setUpDeck //used fopr views TODO: get rid of these placed views
 {
     int i =0;
     for (PlayingCardView *playingCardView in self.playingCardViews)
@@ -51,21 +74,8 @@
 
 - (void)startNewGame
 {
-    
-//    if (self.threeCardGame.on)
-//    {
-//        self.game = [[CardMatchingGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:3];
-//    }
-//    else
-//        self.game = [[CardMatchingGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:2];
-    
-    self.messages = [NSMutableArray new];
-    
+    self.cardViews = nil;
     self.game = [self createGame];
-    
-    self.matchResults.text = @"Good Luck!";
-    self.threeCardGame.enabled = YES;
-    
     [self updateUI];
 }
 
@@ -76,38 +86,37 @@
 
 - (NSUInteger)numberOfMatches
 {
-    return self.threeCardGame.on ? 3 : 2;
+    return 2;
 }
 
 - (CardMatchingGame *)createGame
 {
-    return [[PlayingCardGame alloc] initWithCardCount:[self.playingCardViews count] usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
+    return [[PlayingCardGame alloc] initWithCardCount:self.numberOfStartingCards usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
 }
 
-- (void)playingCardViewWasTapped:(PlayingCardView *)playingCardView
+- (void)playingCardViewWasTapped:(PlayingCardView *)playingCardView // for placed views (delegate)
 {
-    self.threeCardGame.enabled = NO;
     NSUInteger cardIndex = playingCardView.screenLocationIndex;
     
-    if (! self.messages)
-    {
-        self.messages = [NSMutableArray new];
-    }
-    
+//    if (! self.messages)
+//    {
+//        self.messages = [NSMutableArray new];
+//    }
+//    
     NSString *returnedMessage = [self.game chooseCardAtIndex:cardIndex];
-    
-    if (returnedMessage)
-    {
-        [self.messages addObject:returnedMessage];
-    }
-    if ([self.messages count] > 0)
-    {
-        self.matchResults.text = [self.messages lastObject];
-    }
-    else
-    {
-        self.matchResults.text = returnedMessage;
-    }
+//    
+//    if (returnedMessage)
+//    {
+//        [self.messages addObject:returnedMessage];
+//    }
+//    if ([self.messages count] > 0)
+//    {
+//        self.matchResults.text = [self.messages lastObject];
+//    }
+//    else
+//    {
+//        self.matchResults.text = returnedMessage;
+//    }
     [self updateUI];
     
     //[playingCardView setBackgroundColor:[UIColor greenColor]];
@@ -144,21 +153,52 @@
 //    [self updateUI];
 //    
 //}
-
+#define CARDSPACINGINPERCENT 0.08
 - (void)updateUI
 {
-    for(UIButton *cardButton in self.cardButtons)
-    {
-        NSUInteger cardIndex = [self.cardButtons indexOfObject:cardButton];
+    for (NSUInteger cardIndex = 0;
+         cardIndex < self.game.numberOfDealtCards;
+         cardIndex++) {
         Card *card = [self.game cardAtIndex:cardIndex];
-        [cardButton setTitle: [self titleForCard:card] forState:UIControlStateNormal];
-        [cardButton setBackgroundImage:[self backgroundImageForCard:card] forState:UIControlStateNormal];
-        cardButton.enabled = !card.isMatched;
-        
+        NSUInteger viewIndex = [self.cardViews indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if ([obj isKindOfClass:[UIView class]]) {
+                if (((UIView *)obj).tag == cardIndex) return YES;
+            }
+            return NO;
+        }];
+        UIView *cardView;
+        if (viewIndex == NSNotFound) {
+            cardView = [self createViewForCard:card];
+            cardView.tag = cardIndex;
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                  action:@selector(touchCard:)];
+            [cardView addGestureRecognizer:tap];
+            [self.cardViews addObject:cardView];
+            viewIndex = [self.cardViews indexOfObject:cardView];
+            [self.gridView addSubview:cardView];
+        } else {
+            cardView = self.cardViews[viewIndex];
+            [self updateView:cardView forCard:card];
+            cardView.alpha = card.matched ? 0.6 : 1.0;
+        }
+        CGRect frame = [self.grid frameOfCellAtRow:viewIndex / self.grid.columnCount
+                                          inColumn:viewIndex % self.grid.columnCount];
+        frame = CGRectInset(frame, frame.size.width * CARDSPACINGINPERCENT, frame.size.height * CARDSPACINGINPERCENT);
+        cardView.frame = frame;
     }
+    
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
     
 }
+
+- (void)touchCard:(UITapGestureRecognizer *)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        [self.game chooseCardAtIndex:gesture.view.tag];
+        [self updateUI];
+    }
+}
+
 
 - (NSString *)titleForCard:(Card *)card
 {
@@ -169,5 +209,7 @@
 {
     return [UIImage imageNamed:card.isChosen ? @"cardfront" : @"appleCard"];
 }
+
+
 
 @end

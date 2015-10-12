@@ -12,7 +12,7 @@
 
 @interface ViewController ()
 
-@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
+//@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
 
 @end
 
@@ -28,15 +28,48 @@
     [self updateUI];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+#pragma mark - New Grid stuff
+- (NSMutableArray *)cardViews
 {
-    if([segue.destinationViewController isKindOfClass:[HistoryViewController class]])
+    if (!_cardViews) _cardViews = [NSMutableArray arrayWithCapacity:self.numberOfStartingCards];
+    return _cardViews;
+}
+
+- (Grid *)grid
+{
+    if (!_grid)
     {
-        HistoryViewController *hsvc =
-        (HistoryViewController*)segue.destinationViewController;
-        hsvc.messages = self.messages;
+        _grid = [[Grid alloc] init];
+        _grid.cellAspectRatio = self.maxCardSize.width / self.maxCardSize.height;
+        _grid.minimumNumberOfCells = self.numberOfStartingCards;
+        _grid.maxCellWidth = self.maxCardSize.width;
+        _grid.maxCellHeight = self.maxCardSize.height;
+        _grid.size = self.gridView.frame.size;
+    }
+    return _grid;
+}
+
+- (UIView *)createViewForCard:(Card *)card
+{
+    UIView *view = [[UIView alloc] init];
+    [self updateView:view forCard:card];
+    return view;
+}
+
+- (void)updateView:(UIView *)view forCard:(Card *)card
+{
+    view.backgroundColor = [UIColor blueColor];
+}
+
+- (void)touchCard:(UITapGestureRecognizer *)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateEnded)
+    {
+        [self.game chooseCardAtIndex:gesture.view.tag];
+        [self updateUI];
     }
 }
+
 
 - (Deck *)createDeck //abstract
 {
@@ -45,7 +78,7 @@
 
 - (NSUInteger)numberOfMatches
 {
-    return 3;
+    return 2;
 }
 
 - (CardMatchingGame *)game
@@ -62,16 +95,9 @@
     return nil; //abstract
 }
 
-- (IBAction)switchMoved:(UISwitch *)sender
-{
-    [self startNewGame];
-}
-
-
-
 - (IBAction)touchResetButton:(UIButton *)sender
 {
-    
+    self.cardViews = nil;
     [self startNewGame];
 }
 
@@ -79,7 +105,6 @@
 {
     //abstract
 }
-
 
 - (void)startNewGame
 {
@@ -95,6 +120,8 @@
 {
     return nil; //abstract
 }
+
+
 
 
 
