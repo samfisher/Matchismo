@@ -199,7 +199,7 @@
         [[self uiColor] setFill];
         [path fill];
     }
-    else if ([self.shading isEqualToString:@"striped"])
+    else if ([self.shading isEqualToString:@"shaded"])
     {
         CGContextRef context = UIGraphicsGetCurrentContext();
         CGContextSaveGState(context);
