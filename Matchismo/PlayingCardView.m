@@ -72,15 +72,15 @@
     }
 }
 
-- (void)tap:(UISwipeGestureRecognizer *)sender
-{
-    self.faceUp = !self.faceUp;
-    
-    if (self.delegate)
-    {
-        [self.delegate playingCardViewWasTapped:self];
-    }
-}
+//- (void)tap:(UISwipeGestureRecognizer *)sender
+//{
+//    self.faceUp = !self.faceUp;
+//    
+//    if (self.delegate)
+//    {
+//        [self.delegate playingCardViewWasTapped:self];
+//    }
+//}
 
 #pragma mark - Drawing
 
@@ -252,7 +252,7 @@
     
     [self addGestureRecognizer:[[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinch:)]];
     
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)]];
+    //[self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)]];
 }
 
 - (void)awakeFromNib

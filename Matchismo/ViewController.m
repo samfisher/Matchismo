@@ -12,7 +12,7 @@
 
 @interface ViewController ()
 
-@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
+//@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
 
 @end
 
@@ -28,14 +28,98 @@
     [self updateUI];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+#pragma mark - New Grid stuff
+- (NSMutableArray *)cardViews
 {
-    if([segue.destinationViewController isKindOfClass:[HistoryViewController class]])
+    if (!_cardViews) _cardViews = [NSMutableArray arrayWithCapacity:self.numberOfStartingCards];
+    return _cardViews;
+}
+
+- (Grid *)grid
+{
+    if (!_grid)
     {
-        HistoryViewController *hsvc =
-        (HistoryViewController*)segue.destinationViewController;
-        hsvc.messages = self.messages;
+        _grid = [[Grid alloc] init];
+        _grid.cellAspectRatio = self.maxCardSize.width / self.maxCardSize.height;
+        _grid.minimumNumberOfCells = self.numberOfStartingCards;
+        _grid.maxCellWidth = self.maxCardSize.width;
+        _grid.maxCellHeight = self.maxCardSize.height;
+        _grid.size = self.gridView.frame.size;
     }
+    return _grid;
+}
+
+#define CARDSPACINGINPERCENT 0.08
+- (void)updateUI
+{
+    for (NSUInteger cardIndex = 0;
+         cardIndex < self.game.numberOfDealtCards;
+         cardIndex++)
+    {
+        Card *card = [self.game cardAtIndex:cardIndex];
+        NSUInteger viewIndex = [self.cardViews indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop)
+        {
+            if ([obj isKindOfClass:[UIView class]])
+            {
+                if (((UIView *)obj).tag == cardIndex) return YES;
+            }
+            return NO;
+        }];
+        UIView *cardView;
+        if (viewIndex == NSNotFound)
+        {
+            cardView = [self createViewForCard:card];
+            cardView.tag = cardIndex;
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                  action:@selector(touchCard:)];
+            [cardView addGestureRecognizer:tap];
+            [self.cardViews addObject:cardView];
+            viewIndex = [self.cardViews indexOfObject:cardView];
+            [self.gridView addSubview:cardView];
+        }
+        else
+        {
+            cardView = self.cardViews[viewIndex];
+            [self updateView:cardView forCard:card];
+            cardView.alpha = card.matched ? 0.6 : 1.0;
+        }
+        
+        CGRect frame = [self.grid frameOfCellAtRow:viewIndex / self.grid.columnCount
+                                          inColumn:viewIndex % self.grid.columnCount];
+        frame = CGRectInset(frame, frame.size.width * CARDSPACINGINPERCENT, frame.size.height * CARDSPACINGINPERCENT);
+        cardView.frame = frame;
+    }
+    
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
+}
+
+- (UIView *)createViewForCard:(Card *)card
+{
+    UIView *view = [[UIView alloc] init];
+    [self updateView:view forCard:card];
+    return view;
+}
+
+- (void)updateView:(UIView *)view forCard:(Card *)card
+{
+    view.backgroundColor = [UIColor blueColor];
+}
+
+- (void)touchCard:(UITapGestureRecognizer *)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateEnded)
+    {
+        [self.game chooseCardAtIndex:gesture.view.tag];
+        [self updateUI];
+    }
+}
+
+
+- (void)startNewGame
+{
+    self.cardViews = nil;
+    self.game = [self createGame];
+    [self updateUI];
 }
 
 - (Deck *)createDeck //abstract
@@ -45,7 +129,7 @@
 
 - (NSUInteger)numberOfMatches
 {
-    return 3;
+    return 2;
 }
 
 - (CardMatchingGame *)game
@@ -62,39 +146,14 @@
     return nil; //abstract
 }
 
-- (IBAction)switchMoved:(UISwitch *)sender
-{
-    [self startNewGame];
-}
-
-
-
 - (IBAction)touchResetButton:(UIButton *)sender
 {
-    
+    self.cardViews = nil;
     [self startNewGame];
 }
 
-- (void)updateUI
-{
-    //abstract
-}
 
 
-- (void)startNewGame
-{
-    //abstract
-}
-
-- (NSString *)titleForCard:(Card *)card
-{
-    return nil; //abstract
-}
-
-- (UIImage *)backgroundImageForCard:(Card *)card
-{
-    return nil; //abstract
-}
 
 
 

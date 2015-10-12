@@ -41,6 +41,12 @@
     return nil;
 }
 
+- (instancetype)initWithCardCount:(NSUInteger)count
+                        usingDeck:(Deck *)deck
+{
+    return [self initWithCardCount:count usingDeck:deck numberOfMatches:2];
+}
+
 - (id)chooseCardAtIndex:(NSUInteger)index
 {
     return nil;
@@ -50,6 +56,13 @@
 {
     return nil;
 }
+
+- (NSUInteger)numberOfDealtCards
+{
+    return [self.cards count];
+}
+
+
 
 
 @end
