@@ -29,7 +29,7 @@
     self.maxCardSize = CGSizeMake(80.0, 120.0);
     
     [self startNewGame];
-
+    
 }
 
 - (UIView *)createViewForCard:(Card *)card
@@ -66,7 +66,39 @@
     return [[PlayingCardGame alloc] initWithCardCount:self.numberOfStartingCards usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
 }
 
-
+- (void)touchCard:(UITapGestureRecognizer *)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateEnded)
+    {
+        Card *card = [self.game cardAtIndex:gesture.view.tag];
+        if (card.chosen)
+        {
+            [UIView transitionWithView:gesture.view
+                              duration:0.5
+                               options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+                                   card.chosen = !card.chosen;
+                                   [self updateView:gesture.view forCard:card];
+                               } completion:^(BOOL finished) {
+                                   card.chosen = !card.chosen;
+                                   [self.game chooseCardAtIndex:gesture.view.tag];
+                                   [self updateUI];
+                               }];
+        }
+        else
+        {
+            [UIView transitionWithView:gesture.view
+                              duration:0.5
+                               options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+                                   card.chosen = !card.chosen;
+                                   [self updateView:gesture.view forCard:card];
+                               } completion:^(BOOL finished) {
+                                   card.chosen = !card.chosen;
+                                   [self.game chooseCardAtIndex:gesture.view.tag];
+                                   [self updateUI];
+                               }];
+        }
+    }
+}
 
 
 

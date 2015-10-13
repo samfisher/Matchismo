@@ -153,6 +153,7 @@
     view.backgroundColor = [UIColor blueColor];
 }
 
+
 - (void)touchCard:(UITapGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateEnded)
