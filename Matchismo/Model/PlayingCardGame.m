@@ -20,6 +20,7 @@
 {
     self = [super init];
     self.numberOfCardsToMatch = numberOfMatches;
+    self.deck = deck;
     if (self)
     {
         for(int i = 0; i< count; i++)

@@ -22,6 +22,8 @@
 
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck;
+- (void)drawNewCard;
+- (BOOL)deckIsEmpty;
 
 @property (nonatomic) NSInteger score;
 
@@ -32,5 +34,7 @@
 @property (nonatomic, readwrite) NSMutableArray *messages;//match messages
 
 @property (nonatomic, readonly) NSUInteger numberOfDealtCards;
+
+@property (nonatomic, strong) Deck *deck;
 
 @end

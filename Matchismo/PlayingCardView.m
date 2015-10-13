@@ -85,7 +85,7 @@
 #pragma mark - Drawing
 
 #define CORNER_FONT_STANDARD_HEIGHT 180.0
-#define CORNER_RADIUS 12.0
+#define CORNER_RADIUS 0.1
 
 - (CGFloat) cornerScaleFactor { return self.bounds.size.height / CORNER_FONT_STANDARD_HEIGHT; }
 - (CGFloat) cornerRadius { return CORNER_RADIUS * [self cornerScaleFactor]; }
@@ -98,7 +98,8 @@
 {
     // Drawing code
     
-    UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius: [self cornerRadius]];
+    UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                                           cornerRadius:self.bounds.size.width * CORNER_RADIUS];
     
     [roundedRect addClip];
     

@@ -62,6 +62,25 @@
     return [self.cards count];
 }
 
+- (void)drawNewCard
+{
+    Card *card = [self.deck drawRandomCard];
+    if (card)
+    {
+        [self.cards addObject:card];
+    }
+}
+
+- (BOOL)deckIsEmpty
+{
+    Card *card = [self.deck drawRandomCard];
+    if (card)
+    {
+        [self.deck addCard:card];
+        return NO;
+    }
+    return YES;
+}
 
 
 

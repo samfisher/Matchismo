@@ -13,6 +13,7 @@
 @interface ViewController ()
 
 //@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
+@property (weak, nonatomic) IBOutlet UIButton *addCardsButton;
 
 @end
 
@@ -25,6 +26,24 @@
 {
     [super viewDidLoad];
     
+    [self updateUI];
+}
+
+#pragma mark - add cards button
+
+
+- (IBAction)touchAddCardsButton:(UIButton *)sender
+{
+    for (int i = 0; i < 3; i++)
+    {
+        [self.game drawNewCard];
+    }
+    
+    if (self.game.deckIsEmpty)
+    {
+        sender.enabled = NO;
+        sender.alpha = 0.5;
+    }
     [self updateUI];
 }
 
@@ -102,11 +121,22 @@
                 [self.cardViews removeObject:cardView];
             }
         }
-        CGRect frame = [self.grid frameOfCellAtRow:viewIndex / self.grid.columnCount
-                                          inColumn:viewIndex % self.grid.columnCount];
-        frame = CGRectInset(frame, frame.size.width * CARDSPACINGINPERCENT, frame.size.height * CARDSPACINGINPERCENT);
-        cardView.frame = frame;
+        
+        
+        self.grid.minimumNumberOfCells = [self.cardViews count];
+        
+        for (NSUInteger viewIndex = 0; viewIndex < [self.cardViews count]; viewIndex++)
+        {
+            CGRect frame = [self.grid frameOfCellAtRow:viewIndex / self.grid.columnCount
+                                              inColumn:viewIndex % self.grid.columnCount];
+            frame = CGRectInset(frame, frame.size.width * CARDSPACINGINPERCENT, frame.size.height * CARDSPACINGINPERCENT);
+            ((UIView *)self.cardViews[viewIndex]).frame = frame;
+        }
+        
     }
+    
+    
+    
     
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
 }
