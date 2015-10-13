@@ -215,9 +215,26 @@
 
 - (void)startNewGame
 {
+    
+    self.game = nil;
+    
+    for (UIView *subView in self.cardViews) {
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             subView.frame = CGRectMake(0.0,
+                                                        self.gridView.bounds.size.height,
+                                                        self.grid.cellSize.width,
+                                                        self.grid.cellSize.height);
+                         } completion:^(BOOL finished) {
+                             [subView removeFromSuperview];
+                         }];
+    }
+    
     self.cardViews = nil;
-    self.game = [self createGame];
+    self.grid = nil;
+    
     [self updateUI];
+    self.game = [self createGame];
 }
 
 - (Deck *)createDeck //abstract
@@ -246,7 +263,6 @@
 
 - (IBAction)touchResetButton:(UIButton *)sender
 {
-    self.cardViews = nil;
     [self startNewGame];
 }
 
