@@ -232,9 +232,9 @@
     
     self.cardViews = nil;
     self.grid = nil;
-    
-    [self updateUI];
     self.game = [self createGame];
+    [self updateUI];
+    
 }
 
 - (Deck *)createDeck //abstract
