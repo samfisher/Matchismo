@@ -26,6 +26,7 @@
 {
     [super viewDidLoad];
     
+    self.removeMatchingCards = YES;
     self.numberOfStartingCards = 12;
     self.maxCardSize = CGSizeMake(120.0, 120.0);
     

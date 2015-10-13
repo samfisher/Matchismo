@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 
 @property (nonatomic) NSUInteger numberOfMatches;
+@property (nonatomic) BOOL removeMatchingCards;
 
 @property (weak, nonatomic) IBOutlet UIView *gridView;
 @property (nonatomic) NSUInteger numberOfStartingCards;

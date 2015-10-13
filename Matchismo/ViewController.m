@@ -68,6 +68,43 @@
     return _grid;
 }
 
+- (void)touchCard:(UITapGestureRecognizer *)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateEnded)
+    {
+        Card *card = [self.game cardAtIndex:gesture.view.tag];
+        if (!card.matched)
+        {
+            if (card.chosen)
+            {
+                [UIView transitionWithView:gesture.view
+                                  duration:0.5
+                                   options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+                                       card.chosen = !card.chosen;
+                                       [self updateView:gesture.view forCard:card];
+                                   } completion:^(BOOL finished) {
+                                       card.chosen = !card.chosen;
+                                       [self.game chooseCardAtIndex:gesture.view.tag];
+                                       [self updateUI];
+                                   }];
+            }
+            else
+            {
+                [UIView transitionWithView:gesture.view
+                                  duration:0.5
+                                   options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+                                       card.chosen = !card.chosen;
+                                       [self updateView:gesture.view forCard:card];
+                                   } completion:^(BOOL finished) {
+                                       card.chosen = !card.chosen;
+                                       [self.game chooseCardAtIndex:gesture.view.tag];
+                                       [self updateUI];
+                                   }];
+            }
+        }
+    }
+}
+
 #define CARDSPACINGINPERCENT 0.08
 - (void)updateUI
 {
@@ -77,19 +114,13 @@
     {
         Card *card = [self.game cardAtIndex:cardIndex];
         
-        NSUInteger viewIndex = [self.cardViews indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop)
-                                {
-                                    if ([obj isKindOfClass:[UIView class]])
-                                    {
-                                        if (((UIView *)obj).tag == cardIndex)
-                                        {
-                                            return YES;
-                                        }
-                                    }
-                                    return NO;
-                                    
-                                }];
-        
+        NSUInteger viewIndex = [self.cardViews indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if ([obj isKindOfClass:[UIView class]])
+            {
+                if (((UIView *)obj).tag == cardIndex) return YES;
+            }
+            return NO;
+        }];
         UIView *cardView;
         if (viewIndex == NSNotFound)
         {
@@ -117,8 +148,24 @@
             }
             else
             {
-                [cardView removeFromSuperview];
-                [self.cardViews removeObject:cardView];
+                if (self.removeMatchingCards)
+                {
+                    [self.cardViews removeObject:cardView];
+                    [UIView animateWithDuration:1.0
+                                     animations:^{
+                                         cardView.frame = CGRectMake(0.0,
+                                                                     self.gridView.bounds.size.height,
+                                                                     self.grid.cellSize.width,
+                                                                     self.grid.cellSize.height);
+                                         
+                                     } completion:^(BOOL finished) {
+                                         [cardView removeFromSuperview];
+                                     }];
+                }
+                else
+                {
+                    cardView.alpha = card.matched ? 0.6 : 1.0;
+                }
             }
         }
         
@@ -141,6 +188,18 @@
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
 }
 
+#define FRAMEROUNDINGERROR 0.01
+
+- (BOOL)frame:(CGRect)frame1 equalToFrame:(CGRect)frame2
+{
+    if (fabs(frame1.size.width - frame2.size.width) > FRAMEROUNDINGERROR) return NO;
+    if (fabs(frame1.size.height - frame2.size.height) > FRAMEROUNDINGERROR) return NO;
+    if (fabs(frame1.origin.x - frame2.origin.x) > FRAMEROUNDINGERROR) return NO;
+    if (fabs(frame1.origin.y - frame2.origin.y) > FRAMEROUNDINGERROR) return NO;
+    return YES;
+}
+
+
 - (UIView *)createViewForCard:(Card *)card
 {
     UIView *view = [[UIView alloc] init];
@@ -151,16 +210,6 @@
 - (void)updateView:(UIView *)view forCard:(Card *)card
 {
     view.backgroundColor = [UIColor blueColor];
-}
-
-
-- (void)touchCard:(UITapGestureRecognizer *)gesture
-{
-    if (gesture.state == UIGestureRecognizerStateEnded)
-    {
-        [self.game chooseCardAtIndex:gesture.view.tag];
-        [self updateUI];
-    }
 }
 
 
