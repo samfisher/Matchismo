@@ -266,8 +266,19 @@
     [self startNewGame];
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    self.grid.size = self.gridView.bounds.size;
+    [self updateUI];
+}
 
-
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.grid.size = self.gridView.bounds.size;
+    [self updateUI];
+}
 
 
 
