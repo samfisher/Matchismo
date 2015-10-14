@@ -12,15 +12,9 @@
 #import "PlayingCardGame.h"
 #import "PlayingCardView.h"
 
-//@interface PlayingCardGameViewController //() <PlayingCardViewDelegate>
-//
-//@property (strong, nonatomic) IBOutletCollection(PlayingCardView) NSArray *playingCardViews;
-//
-//
-//@end
-
 @implementation PlayingCardGameViewController
 
+#pragma mark - Lifecycle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -32,12 +26,24 @@
     
 }
 
+#pragma mark - Start Game
+- (CardMatchingGame *)createGame
+{
+    return [[PlayingCardGame alloc] initWithCardCount:self.numberOfStartingCards usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
+}
+
+- (Deck *)createDeck
+{
+    return [[PlayingCardDeck alloc]init];
+}
+
 - (UIView *)createViewForCard:(Card *)card
 {
     PlayingCardView *view = [[PlayingCardView alloc] init];
     [self updateView:view forCard:card];
     return view;
 }
+
 
 - (void)updateView:(UIView *)view forCard:(Card *)card
 {
@@ -51,20 +57,12 @@
     
 }
 
-- (Deck *)createDeck
-{
-    return [[PlayingCardDeck alloc]init];
-}
-
+#pragma mark - Game Settings
 - (NSUInteger)numberOfMatches
 {
     return 2;
 }
 
-- (CardMatchingGame *)createGame
-{
-    return [[PlayingCardGame alloc] initWithCardCount:self.numberOfStartingCards usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
-}
 
 
 

@@ -34,6 +34,17 @@
     [self startNewGame];
 }
 
+#pragma mark - Start Game
+- (CardMatchingGame *)createGame
+{
+    return [[SetCardGame alloc] initWithCardCount:self.numberOfStartingCards usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
+}
+
+- (Deck *)createDeck
+{
+    return [[SetCardDeck alloc] init];
+}
+
 - (UIView *)createViewForCard:(Card *)card
 {
     SetCardView *view = [[SetCardView alloc] init];
@@ -55,16 +66,7 @@
     setCardView.chosen = setCard.chosen;
 }
 
-- (CardMatchingGame *)createGame
-{
-    return [[SetCardGame alloc] initWithCardCount:self.numberOfStartingCards usingDeck:[self createDeck] numberOfMatches:self.numberOfMatches];
-}
-
-- (Deck *)createDeck
-{
-    return [[SetCardDeck alloc] init];
-}
-
+#pragma mark - Game Settings
 - (NSUInteger)numberOfMatches
 {
     return 3;

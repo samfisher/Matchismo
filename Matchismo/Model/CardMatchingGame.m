@@ -10,7 +10,6 @@
 
 @interface CardMatchingGame()
 
-//@property (nonatomic, readwrite) NSInteger score;
 
 @end
 

@@ -8,19 +8,16 @@
 
 #import "ViewController.h"
 
-
-
 @interface ViewController ()
 
-//@property (strong, nonatomic) IBOutlet UISwitch *threeCardGame;
 @property (weak, nonatomic) IBOutlet UIButton *addCardsButton;
 
 @end
 
 @implementation ViewController
+#define CARDSPACINGINPERCENT 0.08
 
 #pragma mark - Lifecycle
-// -----------------------------------------------------------------------------
 
 - (void) viewDidLoad
 {
@@ -29,8 +26,56 @@
     [self updateUI];
 }
 
-#pragma mark - add cards button
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    self.grid.size = self.gridView.bounds.size;
+    [self updateUI];
+}
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.grid.size = self.gridView.bounds.size;
+    [self updateUI];
+}
+
+#pragma mark - Properties
+
+- (CardMatchingGame *)game
+{
+    if (! _game)
+    {
+        _game = [self createGame];
+    }
+    return _game;
+}
+
+- (Grid *)grid
+{
+    if (!_grid)
+    {
+        _grid = [[Grid alloc] init];
+        _grid.cellAspectRatio = self.maxCardSize.width / self.maxCardSize.height;
+        _grid.minimumNumberOfCells = self.numberOfStartingCards;
+        _grid.maxCellWidth = self.maxCardSize.width;
+        _grid.maxCellHeight = self.maxCardSize.height;
+        _grid.size = self.gridView.frame.size;
+    }
+    return _grid;
+}
+
+- (NSMutableArray *)cardViews
+{
+    if (!_cardViews)
+    {
+        _cardViews = [NSMutableArray arrayWithCapacity:self.numberOfStartingCards];
+    }
+    
+    return _cardViews;
+}
+
+#pragma mark - IBActions
 
 - (IBAction)touchAddCardsButton:(UIButton *)sender
 {
@@ -47,26 +92,49 @@
     [self updateUI];
 }
 
-#pragma mark - New Grid stuff
-- (NSMutableArray *)cardViews
+- (IBAction)touchResetButton:(UIButton *)sender
 {
-    if (!_cardViews) _cardViews = [NSMutableArray arrayWithCapacity:self.numberOfStartingCards];
-    return _cardViews;
+    [self startNewGame];
 }
 
-- (Grid *)grid
+#pragma mark - Start game
+- (void)startNewGame
 {
-    if (!_grid)
+    self.game = nil;
+    
+    for (UIView *subView in self.cardViews)
     {
-        _grid = [[Grid alloc] init];
-        _grid.cellAspectRatio = self.maxCardSize.width / self.maxCardSize.height;
-        _grid.minimumNumberOfCells = self.numberOfStartingCards;
-        _grid.maxCellWidth = self.maxCardSize.width;
-        _grid.maxCellHeight = self.maxCardSize.height;
-        _grid.size = self.gridView.frame.size;
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             subView.frame = CGRectMake(0.0,
+                                                        self.gridView.bounds.size.height,
+                                                        self.grid.cellSize.width,
+                                                        self.grid.cellSize.height);
+                         } completion:^(BOOL finished) {
+                             [subView removeFromSuperview];
+                         }];
     }
-    return _grid;
+    
+    self.cardViews = nil;
+    self.grid = nil;
+    self.game = [self createGame];
+    [self updateUI];
+    
 }
+
+- (UIView *)createViewForCard:(Card *)card
+{
+    UIView *view = [[UIView alloc] init];
+    [self updateView:view forCard:card];
+    return view;
+}
+
+- (void)updateView:(UIView *)view forCard:(Card *)card
+{
+    view.backgroundColor = [UIColor blueColor];
+}
+
+#pragma mark - Gesture Handling
 
 - (void)touchCard:(UITapGestureRecognizer *)gesture
 {
@@ -105,7 +173,8 @@
     }
 }
 
-#define CARDSPACINGINPERCENT 0.08
+#pragma mark - updateUI
+
 - (void)updateUI
 {
     for (NSUInteger cardIndex = 0;
@@ -137,7 +206,6 @@
                 viewIndex = [self.cardViews indexOfObject:cardView];
                 [self.gridView addSubview:cardView];
             }
-            
         }
         else
         {
@@ -169,7 +237,6 @@
             }
         }
         
-        
         self.grid.minimumNumberOfCells = [self.cardViews count];
         
         for (NSUInteger viewIndex = 0; viewIndex < [self.cardViews count]; viewIndex++)
@@ -181,106 +248,25 @@
         }
         
     }
-    
-    
-    
-    
+
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
 }
 
-#define FRAMEROUNDINGERROR 0.01
-
-- (BOOL)frame:(CGRect)frame1 equalToFrame:(CGRect)frame2
-{
-    if (fabs(frame1.size.width - frame2.size.width) > FRAMEROUNDINGERROR) return NO;
-    if (fabs(frame1.size.height - frame2.size.height) > FRAMEROUNDINGERROR) return NO;
-    if (fabs(frame1.origin.x - frame2.origin.x) > FRAMEROUNDINGERROR) return NO;
-    if (fabs(frame1.origin.y - frame2.origin.y) > FRAMEROUNDINGERROR) return NO;
-    return YES;
-}
-
-
-- (UIView *)createViewForCard:(Card *)card
-{
-    UIView *view = [[UIView alloc] init];
-    [self updateView:view forCard:card];
-    return view;
-}
-
-- (void)updateView:(UIView *)view forCard:(Card *)card
-{
-    view.backgroundColor = [UIColor blueColor];
-}
-
-
-- (void)startNewGame
-{
-    
-    self.game = nil;
-    
-    for (UIView *subView in self.cardViews) {
-        [UIView animateWithDuration:0.5
-                         animations:^{
-                             subView.frame = CGRectMake(0.0,
-                                                        self.gridView.bounds.size.height,
-                                                        self.grid.cellSize.width,
-                                                        self.grid.cellSize.height);
-                         } completion:^(BOOL finished) {
-                             [subView removeFromSuperview];
-                         }];
-    }
-    
-    self.cardViews = nil;
-    self.grid = nil;
-    self.game = [self createGame];
-    [self updateUI];
-    
-}
-
-- (Deck *)createDeck //abstract
-{
-    return nil;
-}
-
+#pragma mark - Game Settings
 - (NSUInteger)numberOfMatches
 {
     return 2;
 }
 
-- (CardMatchingGame *)game
+# pragma mark - Abstract
+- (Deck *)createDeck //abstract
 {
-    if (! _game)
-    {
-        _game = [self createGame];
-    }
-    return _game;
+    return nil;
 }
 
 - (CardMatchingGame *)createGame
 {
     return nil; //abstract
 }
-
-- (IBAction)touchResetButton:(UIButton *)sender
-{
-    [self startNewGame];
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    self.grid.size = self.gridView.bounds.size;
-    [self updateUI];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    self.grid.size = self.gridView.bounds.size;
-    [self updateUI];
-}
-
-
-
 
 @end

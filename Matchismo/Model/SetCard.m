@@ -9,6 +9,7 @@
 #import "SetCard.h"
 
 @implementation SetCard
+
 #pragma mark - match
 - (int)match:(NSArray *)otherCards
 {
@@ -35,7 +36,7 @@
         return 0;
     }
     
-    if(potentialSet && [a.shading isEqualToString:b.shading] && [a.shading isEqualToString:c.shading])
+    if (potentialSet && [a.shading isEqualToString:b.shading] && [a.shading isEqualToString:c.shading])
     {
         potentialSet = YES;
     }
@@ -61,7 +62,7 @@
         return 0;
     }
     
-    if(potentialSet && (a.number == b.number) && (a.number ==c.number))
+    if (potentialSet && (a.number == b.number) && (a.number ==c.number))
     {
         potentialSet = YES;
     }
@@ -87,7 +88,7 @@
     NSMutableAttributedString *x = [[NSMutableAttributedString alloc ] initWithString:self.shape];
     
     //Number
-    for(int i = 1;i < self.number; i++)
+    for (int i = 1;i < self.number; i++)
     {
         [x appendAttributedString:[[NSAttributedString alloc ] initWithString:self.shape]];
     }
@@ -126,7 +127,6 @@
 
     return [x copy];
 }
-
 
 #pragma mark - Shapes
 
@@ -171,7 +171,6 @@
 {
     return _shading ? _shading : @"?";
 }
-
 
 #pragma mark - Colors
 

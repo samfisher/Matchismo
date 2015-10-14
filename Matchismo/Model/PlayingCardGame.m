@@ -14,7 +14,7 @@
 
 @implementation PlayingCardGame
 
--(instancetype)initWithCardCount:(NSUInteger)count
+- (instancetype)initWithCardCount:(NSUInteger)count
                        usingDeck:(Deck *)deck
                  numberOfMatches:(NSUInteger)numberOfMatches
 {
@@ -39,6 +39,7 @@
     }
     return self;
 }
+
 //#define MISMATCH_PENALTY 2
 //static const int MISMATCH_PENALTY = 2;
 //static const int MATCH_BONUS = 4;
@@ -54,7 +55,7 @@
     NSInteger MISMATCH_PENALTY = [prefs integerForKey:@"mismatch"];
     NSInteger COST_TO_CHOOSE = [prefs integerForKey:@"costToChoose"];
     
-    if(MATCH_BONUS == 0)
+    if (MATCH_BONUS == 0)
         MATCH_BONUS = 1;
     
     Card *card = [self cardAtIndex:index];
@@ -67,7 +68,7 @@
             [self.chosenCards removeObject:card];
             self.score -= COST_TO_CHOOSE;
         }
-        else if([self.chosenCards count]+1 == self.numberOfCardsToMatch)
+        else if ([self.chosenCards count]+1 == self.numberOfCardsToMatch)
         {
             //all cards have been chosen, will now check for matches
             NSMutableArray *messages = [[NSMutableArray alloc] init];

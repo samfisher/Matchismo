@@ -25,7 +25,7 @@
     return _cards;
 }
 
-- (void) addCard:(Card *)card atTop:(BOOL)atTop
+- (void)addCard:(Card *)card atTop:(BOOL)atTop
 {
     if (atTop)
     {
@@ -37,7 +37,7 @@
     }
 }
 
-- (void) addCard:(Card *)card
+- (void)addCard:(Card *)card
 {
     [self addCard:card atTop:NO];
 }
@@ -52,7 +52,6 @@
         randomCard = self.cards[index];
         [self.cards removeObjectAtIndex:index];
     }
-    
     return randomCard;
 }
 
